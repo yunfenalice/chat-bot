@@ -1,37 +1,14 @@
 /* eslint-disable import/newline-after-import */
-const NodeCache = require('node-cache');
 const fs = require('fs');
 const AppError = require('./../utils/appError');
-const miningDataCache = new NodeCache();
-const { validateMiningHardwareData } = require('../models/miningHardwareModel');
 const {
-  calculateExpectedHashes,
-
-  calculatePercentAchieved,
-  calculateExpectedBitcoins,
-  calculateExpectedHashrate
-} = require('../utils/analysis');
-const rawData = fs.readFileSync(
-  './dev-data/data/mining-statistics-data.json',
-  'utf-8'
-);
-const stats = JSON.parse(rawData);
+  validateMiningHardwareData,
+  miningDataCache
+} = require('../models/miningHardwareModel');
 // Middleware for catching async errors
 const catchAsync = fn => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
-exports.getStats = catchAsync(async (req, res, next) => {
-  // Retrieve data from the cache
-
-  if (!stats) {
-    return next(new AppError('No Stats data', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: stats
-  });
-});
 
 // Create operation
 exports.createOne = catchAsync(async (req, res, next) => {
@@ -39,7 +16,10 @@ exports.createOne = catchAsync(async (req, res, next) => {
   miningData.id = miningDataCache.keys().length + 1;
 
   // Validate the data against the schema
-  validateMiningHardwareData(miningData);
+  const validataResult = validateMiningHardwareData(miningData);
+  if (validataResult.error) {
+    return next(new AppError(validataResult.error.message, 400));
+  }
 
   // Generate a unique ID (you might want to use a more robust solution)
 
@@ -102,7 +82,6 @@ exports.deleteOne = catchAsync(async (req, res, next) => {
 
   // Delete data from the cache
   const deletedMiningData = miningDataCache.take(id);
-
   if (!deletedMiningData) {
     return next(new AppError('No mining data found with that ID', 404));
   }
@@ -142,45 +121,7 @@ exports.batchInsertMiningHardwareData = filePath => {
         console.log('error', error);
       }
     });
-
-    console.log('Batch insertion completed.');
   } catch (readFileError) {
     console.error('Error reading file:', readFileError);
   }
 };
-exports.getAnalysis = catchAsync(async (req, res, next) => {
-  const id = parseInt(req.params.id, 10);
-  // Retrieve data from the cache
-  const hardwareData = miningDataCache.get(id);
-
-  if (!hardwareData) {
-    return next(new AppError('No mining data found with that ID', 404));
-  }
-  // Retrieve data for each key
-  try {
-    const { actualBitcoins, miningDifficulty } = req.query;
-
-    // expectedHashes
-    const expectedHashes = calculateExpectedHashes(hardwareData.hashRate);
-    // expectedBitcoins
-    const expectedBitcoins = calculateExpectedBitcoins(expectedHashes);
-    const percentAchieved = calculatePercentAchieved(
-      actualBitcoins,
-      expectedBitcoins
-    );
-    const expectedHashrate = calculateExpectedHashrate(
-      actualBitcoins,
-      miningDifficulty
-    );
-
-    res.json({
-      expectedHashes,
-      expectedBitcoins,
-      percentAchieved,
-      expectedHashrate
-    });
-  } catch (error) {
-    console.error('Error during analysis:', error.message);
-    res.status(500).send('Internal Server Error');
-  }
-});

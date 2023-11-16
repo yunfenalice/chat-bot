@@ -2,8 +2,7 @@ const express = require('express');
 const miningDataController = require('../controllers/miningDataController');
 
 const router = express.Router({ mergeParams: true });
-router.get('/stats', miningDataController.getStats);
-router.get('/analysis/:id', miningDataController.getAnalysis);
+
 router
   .route('/')
   .get(miningDataController.getAll)

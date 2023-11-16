@@ -1,4 +1,6 @@
 const { z } = require('zod');
+const NodeCache = require('node-cache');
+const miningDataCache = new NodeCache();
 
 // Define a schema for miningHardwareModel
 const miningHardwareModelSchema = z.object({
@@ -9,17 +11,11 @@ const miningHardwareModelSchema = z.object({
 });
 
 function validateMiningHardwareData(miningHardwareData) {
-  try {
-    const validatedMiningHardware = miningHardwareModelSchema.parse(
-      miningHardwareData
-    );
-    console.log('Valid Mining Hardware:', validatedMiningHardware);
-  } catch (error) {
-    console.error('Validation Error:', error);
-  }
+  return miningHardwareModelSchema.safeParse(miningHardwareData);
 }
 
 module.exports = {
   validateMiningHardwareData,
-  miningHardwareModelSchema
+  miningHardwareModelSchema,
+  miningDataCache
 };
