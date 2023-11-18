@@ -4,16 +4,19 @@ const {
   isNumberQuestion,
   calculateNumbers,
   repeatWordsWithEvenLength,
-  replaceSpaces,
+  returnRandomValue,
 } = require("./generateData");
 const fs = require("fs");
 const path = require("path");
-const { generateResponse } = require("./thirdParty");
 const filePath = path.join(__dirname, "sports-teams.dat");
 function readFileData() {
   const fileContent = fs.readFileSync(filePath, "utf8");
   return fileContent;
 }
+function alphabetizeOrder(array) {
+  return array.sort((a, b) => a.localeCompare(b));
+}
+
 function extractYear(sentence) {
   const yearRegex = /\b(\d{4})\b/; // Matches a 4-digit number (assumed to be a year)
 
@@ -27,10 +30,9 @@ function extractYear(sentence) {
 }
 
 async function parseContent(question) {
-  // For yes/no questions, random reply with "yes" or "no"
   let res;
   if (isYesNoQuestion(question)) {
-    const yesNoAns = Math.random() > 0.5 ? "yes" : "no";
+    const yesNoAns = "yes";
     res = yesNoAns;
   } else if (isListQuestion(question)) {
     res = generateFakeStringList(5);
@@ -45,29 +47,40 @@ async function parseContent(question) {
     res = "Game Over";
   } else if (question.toLowerCase().includes("even")) {
     res = repeatWordsWithEvenLength(question.split(":")[1].trim());
-  } else {
-    if (question.toLowerCase().includes("data set")) {
-      const targetYear = extractYear(question);
-      const fileContent = readFileData();
-      const lines = fileContent.split("\n");
-      const result = [];
-      for (const line of lines) {
-        const elements = line.split(", ");
-        const year = parseInt(elements[3], 10);
+  } else if (question.toLowerCase().includes("alphabetize")) {
+    const words = question
+      .split(":")[1]
+      .replace(".", "")
+      .trim()
+      .split(",")
+      .map((words) => words.trim());
+    res = alphabetizeOrder(words).join(",");
+  } else if (
+    question.toLowerCase().includes("team") &&
+    question.toLowerCase().includes("which")
+  ) {
+    res = returnRandomValue(question);
+  } else if (question.toLowerCase().includes("data set")) {
+    const targetYear = extractYear(question);
+    const fileContent = readFileData();
+    const lines = fileContent.split("\n");
+    const result = [];
+    for (const line of lines) {
+      const elements = line.split(", ");
+      const year = parseInt(elements[3], 10);
 
-        if (year === targetYear) {
-          result.push(elements[0]);
-        }
+      if (year === targetYear) {
+        result.push(elements[0]);
       }
-      res = result.join(",");
-    } else {
-      res = await generateResponse(question);
     }
-    res = replaceSpaces(res);
+    res = result.join(",");
+  } else {
+    res = "it is beyond my expectations";
   }
   return res;
 }
 module.exports = {
   extractYear,
   parseContent,
+  alphabetizeOrder,
 };

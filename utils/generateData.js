@@ -14,7 +14,7 @@ function generateRandomInteger(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 function repeatWordsWithEvenLength(inputString) {
-  // Extract the list of words from the input string
+  console.log("string", inputString);
   const wordsArray = inputString.match(/\b\w+\b/g);
 
   // Filter words with an even number of letters
@@ -95,6 +95,17 @@ function isNumberQuestion(message) {
     lowercasedMessage.includes("how")
   );
 }
+function returnRandomValue(question) {
+  const words = question
+    .split(":")[1]
+    .replace(".", "")
+    .replace("?", "")
+    .trim()
+    .split(",")
+    .map((words) => words.trim());
+  const randomIndex = Math.floor(Math.random() * words.length);
+  return words[randomIndex];
+}
 module.exports = {
   generateFakeStringList,
   generateRandomInteger,
@@ -104,4 +115,5 @@ module.exports = {
   calculateNumbers,
   repeatWordsWithEvenLength,
   replaceSpaces,
+  returnRandomValue,
 };
