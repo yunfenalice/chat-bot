@@ -1,3 +1,5 @@
+/* eslint-disable prefer-template */
+/* eslint-disable import/newline-after-import */
 const axios = require('axios');
 const util = require('util');
 const setTimeoutPromise = util.promisify(setTimeout);
@@ -9,9 +11,7 @@ async function generateResponse(message) {
 
   const requestData = {
     model: 'gpt-3.5-turbo',
-    messages: [
-      { role: 'user', content: message + ', make your answer shorter' }
-    ],
+    messages: [{ role: 'user', content: message }],
     stream: false
   };
 

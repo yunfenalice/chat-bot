@@ -1,3 +1,5 @@
+const faker = require('@faker-js/faker');
+
 function generateFakeStringList(length) {
   const fakeList = [];
 
