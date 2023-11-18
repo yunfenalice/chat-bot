@@ -4,14 +4,19 @@ const axios = require("axios");
 const util = require("util");
 const setTimeoutPromise = util.promisify(setTimeout);
 const apiUrl = "https://api-fakell.x10.mx/v1/chat/completions/";
-const delay = 10000; // (10 seconds) delay
+const delay = 5000; // (10 seconds) delay
 
 async function generateResponse(message) {
   await setTimeoutPromise(delay);
 
   const requestData = {
     model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: message }],
+    messages: [
+      {
+        role: "user",
+        content: "just reply with answer, no need add . in the end:" + message,
+      },
+    ],
     stream: false,
   };
 

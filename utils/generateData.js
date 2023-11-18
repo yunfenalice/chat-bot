@@ -1,4 +1,4 @@
-const faker = require('@faker-js/faker');
+const faker = require("@faker-js/faker");
 
 function generateFakeStringList(length) {
   const fakeList = [];
@@ -8,13 +8,44 @@ function generateFakeStringList(length) {
     fakeList.push(fakeString);
   }
 
-  return fakeList.join(',');
+  return fakeList.join(",");
 }
 function generateRandomInteger(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
+function repeatWordsWithEvenLength(inputString) {
+  // Extract the list of words from the input string
+  const wordsArray = inputString.match(/\b\w+\b/g);
+
+  // Filter words with an even number of letters
+  const evenLengthWords = wordsArray.filter((word) => word.length % 2 === 0);
+
+  // Create the bot response
+  const botResponse = evenLengthWords.join(", ");
+
+  // Return the bot response
+  return botResponse;
+}
+function replaceSpaces(inputString) {
+  const phrases = inputString.match(/('.*?'|".*?"|\S+)/g);
+
+  // Replace spaces in individual words, but not within phrases
+  const replacedString = phrases
+    .map((word) => {
+      if (word[0] === "'" || word[0] === '"') {
+        // Preserve phrases with quotes
+        return word;
+      } else {
+        // Replace spaces in individual words
+        return word.replace(/\s+/g, "");
+      }
+    })
+    .join(" ");
+
+  return replacedString;
+}
 function calculateNumbers(numbers) {
-  const numbersAsIntegers = numbers.map(num => parseInt(num, 10));
+  const numbersAsIntegers = numbers.map((num) => parseInt(num, 10));
   const sum = numbersAsIntegers.reduce((acc, num) => acc + num, 0);
   const min = Math.min(...numbersAsIntegers);
   const max = Math.max(...numbersAsIntegers);
@@ -26,42 +57,42 @@ function isYesNoQuestion(message) {
   const lowercasedMessage = message.toLowerCase();
 
   return (
-    lowercasedMessage.includes('yes/no') ||
-    lowercasedMessage.includes('yes or no') ||
-    lowercasedMessage.includes('do you') ||
-    lowercasedMessage.includes('is it') ||
-    lowercasedMessage.includes('are you') ||
-    lowercasedMessage.includes('can you') ||
-    lowercasedMessage.includes('will you') ||
-    lowercasedMessage.includes('should you') ||
-    lowercasedMessage.includes('would you')
+    lowercasedMessage.includes("yes/no") ||
+    lowercasedMessage.includes("yes or no") ||
+    lowercasedMessage.includes("do you") ||
+    lowercasedMessage.includes("is it") ||
+    lowercasedMessage.includes("are you") ||
+    lowercasedMessage.includes("can you") ||
+    lowercasedMessage.includes("will you") ||
+    lowercasedMessage.includes("should you") ||
+    lowercasedMessage.includes("would you")
   );
 }
 function isListQuestion(message) {
   const lowercasedMessage = message.toLowerCase();
 
   return (
-    lowercasedMessage.includes('list') ||
-    lowercasedMessage.includes('elements') ||
-    lowercasedMessage.includes('names') ||
-    lowercasedMessage.includes('items') ||
-    lowercasedMessage.includes('provide') ||
-    lowercasedMessage.includes('give') ||
-    lowercasedMessage.includes('show')
+    lowercasedMessage.includes("list") ||
+    lowercasedMessage.includes("elements") ||
+    lowercasedMessage.includes("names") ||
+    lowercasedMessage.includes("items") ||
+    lowercasedMessage.includes("provide") ||
+    lowercasedMessage.includes("give") ||
+    lowercasedMessage.includes("show")
   );
 }
 function isNumberQuestion(message) {
   const lowercasedMessage = message.toLowerCase();
 
   return (
-    lowercasedMessage.includes('number') ||
-    lowercasedMessage.includes('how many') ||
-    lowercasedMessage.includes('quantity') ||
-    lowercasedMessage.includes('amount') ||
-    lowercasedMessage.includes('measure') ||
-    lowercasedMessage.includes('total') ||
-    lowercasedMessage.includes('what') ||
-    lowercasedMessage.includes('how')
+    lowercasedMessage.includes("number") ||
+    lowercasedMessage.includes("how many") ||
+    lowercasedMessage.includes("quantity") ||
+    lowercasedMessage.includes("amount") ||
+    lowercasedMessage.includes("measure") ||
+    lowercasedMessage.includes("total") ||
+    lowercasedMessage.includes("what") ||
+    lowercasedMessage.includes("how")
   );
 }
 module.exports = {
@@ -70,5 +101,7 @@ module.exports = {
   isYesNoQuestion,
   isListQuestion,
   isNumberQuestion,
-  calculateNumbers
+  calculateNumbers,
+  repeatWordsWithEvenLength,
+  replaceSpaces,
 };

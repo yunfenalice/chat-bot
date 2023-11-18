@@ -1,13 +1,6 @@
-const {
-  generateFakeStringList,
-  isYesNoQuestion,
-  isListQuestion,
-  isNumberQuestion,
-  calculateNumbers
-} = require('../utils/generateData');
-const { generateResponse } = require('../utils/thirdParty');
-
-const BASE_URL = 'https://code-challenge.us1.sandbox-rivaltech.io';
+const axios = require("axios");
+const { parseContent } = require("../utils/helper");
+const BASE_URL = "https://code-challenge.us1.sandbox-rivaltech.io";
 
 async function registerUser(name, email) {
   const url = `${BASE_URL}/challenge-register`;
@@ -15,7 +8,7 @@ async function registerUser(name, email) {
   try {
     const response = await axios.post(url, {
       name: name,
-      email: email
+      email: email,
     });
 
     return response.data.user_id;
@@ -30,7 +23,7 @@ async function initializeConversation(userId) {
 
   try {
     const response = await axios.post(url, {
-      user_id: userId
+      user_id: userId,
     });
 
     return response.data.conversation_id;
@@ -56,7 +49,7 @@ async function replyToChatbot(conversationId, content) {
 
   try {
     const response = await axios.post(url, {
-      content: content
+      content: content,
     });
 
     return response.data.correct;
@@ -65,29 +58,11 @@ async function replyToChatbot(conversationId, content) {
     throw error;
   }
 }
-async function parseContent(question) {
-  // For yes/no questions, random reply with "yes" or "no"
-  let res;
-  if (isYesNoQuestion(question)) {
-    const yesNoAns = Math.random() > 0.5 ? 'yes' : 'no';
-    res = yesNoAns;
-  } else if (isListQuestion(question)) {
-    res = generateFakeStringList(5);
-  } else if (isNumberQuestion(question) && question.match(/\d+/g)) {
-    const numbers = question.match(/\d+/g);
-    res = '' + calculateNumbers(numbers);
-  } else if (question.toLowerCase().includes('thank you')) {
-    res = 'Game Over';
-  } else {
-    res = await generateResponse(question);
-  }
-  return res;
-}
 
 exports.startConversation = async () => {
   try {
     // Register a user
-    const userId = await registerUser('Jane Doe', 'jane@doe.com');
+    const userId = await registerUser("Jane Doe", "jane@doe.com");
     console.log(`User registered with ID: ${userId}`);
 
     // Initialize a conversation
@@ -103,14 +78,14 @@ exports.startConversation = async () => {
         console.log(`Bot says: ${messages[messages.length - 1].text}`);
         message = messages[messages.length - 1].text;
       } else {
-        console.log('No messages retrieved.');
+        console.log("No messages retrieved.");
         break;
       }
       innerLoop: while (true) {
         const replyContent = await parseContent(message);
 
-        if (replyContent === 'Game Over') {
-          console.log('Celebrating ! We will contact you!');
+        if (replyContent === "Game Over") {
+          console.log("Celebrating ! We will contact you!");
           break outerLoop;
         }
         console.log(`I say: ${replyContent}`);
@@ -119,7 +94,7 @@ exports.startConversation = async () => {
           replyContent
         );
         if (!correctAnswer) {
-          console.log('Bot says: it is wrong.');
+          console.log("Bot says: it is wrong.");
         } else {
           break innerLoop;
         }
