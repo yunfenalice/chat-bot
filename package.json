@@ -1,40 +1,23 @@
 {
-  "name": "bitcoin-mgt",
+  "name": "chat-bot",
   "version": "1.0.0",
-  "description": "bitcoin mgmt backend",
+  "description": "chat-bot",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
-    "debug": "ndb server.js",
-    "test": "mocha"
+    "debug": "ndb server.js"
   },
   "author": "Alice",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dotenv": "^7.0.0",
+    "axios": "^1.6.2",
     "express": "^4.16.4",
-    "express-mongo-sanitize": "^1.3.2",
-    "express-rate-limit": "^3.5.0",
-    "helmet": "^3.16.0",
-    "hpp": "^0.2.2",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.5.2",
-    "morgan": "^1.9.1",
-    "node-cache": "^5.1.2",
-    "nodemailer": "^6.1.1",
-    "slugify": "^1.3.4",
-    "validator": "^10.11.0",
-    "xss-clean": "^0.1.1",
-    "zod": "^3.22.4"
+    "nodemailer": "^6.1.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
     "eslint": "^5.16.0",
-    "chai": "^4.3.10",
-    "chai-http": "^4.4.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-import": "^2.17.2",
@@ -42,10 +25,9 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
+    "nodemon": "^3.0.1",
     "prettier": "^1.17.0",
-    "mocha": "^10.2.0",
-    "supertest": "^6.3.3",
-    "nodemon": "^3.0.1"
+    "supertest": "^6.3.3"
   },
   "engines": {
     "node": ">=18.18.0 <19.0.0"
